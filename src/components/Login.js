@@ -94,6 +94,7 @@ import { useNavigate } from "react-router-dom";
             type="submit"
             fullWidth
             variant="contained"
+            color="primary"
             sx={{ mt: 3, mb: 2 }}
             // href="Home"
             onClick={handleSubmit}

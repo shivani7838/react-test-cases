@@ -13,22 +13,6 @@
 //   });
 // });
 
-// describe("Login", () => {
-//   it("renders the login form", () => {
-//     const wrapper = shallow(<Login />);
-//     console.log(wrapper)
-//     // expect(wrapper.find("form"));
-//   });
-
-// });
-
-// describe("LoginForm", () => {
-//   it("renders the email input field", () => {
-//     const wrapper = shallow(<Login />);
-//     expect(wrapper.find('input[type="email"]'));
-//   });
-// });
-
 // describe("LoginForm", () => {
 //     it("renders the password input field", () => {
 //       const wrapper = shallow(<Login />);
@@ -71,16 +55,17 @@
 //   });
 // });
 
-import React from "react";
+import * as React from "react";
+
 import { BrowserRouter } from "react-router-dom";
 import userEvent from "@testing-library/user-event";
 import { screen, render } from "@testing-library/react";
+import { Button, TextField } from "@mui/material/";
 import Login from "./Login";
-import { shallow,mount } from "enzyme";
-
+import { shallow } from "enzyme";
 
 const mockedUsedNavigate = jest.fn();
-
+jest.mock("lodash");
 jest.mock("react-router-dom", () => ({
   ...jest.requireActual("react-router-dom"),
 
@@ -88,6 +73,12 @@ jest.mock("react-router-dom", () => ({
 }));
 
 describe("Login", () => {
+  let wrapper;
+
+  beforeEach(() => {
+    wrapper = shallow(<Login />);
+  });
+
   it("has a button and does navigate to other component", async () => {
     render(
       <BrowserRouter>
@@ -96,80 +87,43 @@ describe("Login", () => {
     );
     expect(screen.getByText("Sign In"));
   });
-  it("renders the login form", () => {
-    const wrapper = shallow(<Login />);
-    expect(wrapper.find("form"));
+  it("renders an email input field", () => {
+    expect(wrapper.find("#email")).toHaveLength(1);
   });
-  it("renders the email input field", () => {
-    const wrapper = shallow(<Login />);
-    expect(wrapper.find('input[type="email"]'));
-  });
+
   it("renders the password input field", () => {
-    const wrapper = shallow(<Login />);
-    expect(wrapper.find('input[type="password"]'));
-  });
-  it("renders the login button", () => {
-    const wrapper = shallow(<Login />);
-    expect(wrapper.find('button[type="submit"]'));
+    expect(wrapper.find("#password")).toHaveLength(1);
   });
 
+  // it("renders the login button", () => {
+  //   expect(wrapper.find('button[type="submit"]')).toHaveLength(1);
+  // });
+  // it('renders a submit Button', () => {
+  //   expect(wrapper.find(Button).filter({ type: 'submit' })).toHaveLength(1);
+  // });
+  it("renders a submit Button with Material UI formatting", () => {
+    const submitButton = wrapper.find(Button).filter({ type: "submit" });
+    expect(submitButton).toHaveLength(1);
+    expect(submitButton.prop("variant")).toEqual("contained");
+    expect(submitButton.prop("color")).toEqual("primary");
+    expect(submitButton.text()).toEqual("Sign In");
+  });
+  // it('updates email state when email TextField changes', () => {
+  //   const emailTextField = wrapper.find(TextField).filter({ name: 'email' });
+  //   emailTextField.simulate('change', { target: { name: 'email', value: 'test@example.com' } });
+  //   expect(wrapper.state('email')).toEqual('test@example.com');
+  // });
+  it("submits the form with valid data", () => {
+    const emailInput = wrapper.find("#email");
+    const passwordInput = wrapper.find("#password");
+    const submitButton = wrapper.find(Button).filter({ type: "submit" });
+// console.log("email",emailInput)
+    emailInput.simulate("change", { target: { value: "shivani@gmail.com" } });
+    passwordInput.simulate("change", { target: { value: "shivani" } });
+    submitButton.simulate("submit", { preventDefault: () => {} });
 
-  it('should update state when username input is changed', () => {
-    const wrapper = shallow(<Login />);
-    const usernameInput = wrapper.find('email');
-    usernameInput.simulate('change', {
-      target: { value: 'testuser' }
-    });
-    expect(wrapper.state('email')).toEqual('testuser');
+    // Assert that the form submitted correctly and redirected to the home page
+   expect(window.location.href).toEqual("/home");
   });
 
-
-    describe("LoginForm", () => {
-
-
-        // it('should submit when data filled', () => {
-        //     submitForm.mockResolvedValue({ loggedIn: true });
-        //     const wrapper = shallow(<Login />)
-        //     const updatedEmailInput = simulateChangeOnInput(wrapper, 'input#email-input', 'test@gmail.com')
-        //     const updatedPasswordInput = simulateChangeOnInput(wrapper, 'input#password-input', 'cats'); 
-        //     wrapper.find('form').simulate('submit', {
-        //       preventDefault: () =>{}
-        //     })
-        
-        //     expect(submitForm).toBeCalled()
-        //  })
-
-
-      //     it("submits the form with valid data", () => {
-      // const wrapper = shallow(<Login />);
-      // const emailInput = wrapper.find('input[type="email"]');
-      // const passwordInput = wrapper.find('input[type="password"]');
-      // const submitButton = wrapper.find('button[type="submit"]');
-
-      // emailInput.simulate("change", { target: { value: "shivani@gmail.com" } });
-      // passwordInput.simulate("change", { target: { value: "shivani" } });
-      // submitButton.simulate("submit", { preventDefault: () => {} });
-      //     })
-        
-        // it('validates model on button click', () => {
-        //     const handleSubmit = jest.fn();
-        //     const wrapper = shallow(
-        //         <Login handleSubmit={handleSubmit}/>
-        //     );
-        //     const instance = wrapper.instance();
-        //     const submitBtn = wrapper.find('#sign-in')
-        //     // submitBtn.simulate('Sign In')
-        //     expect(handleSubmit).toHaveBeenCalled();
-        //   });
-
-
-   
-
-    
-       
-      
-    //   // Assert that the form submitted correctly and redirected to the home page
-    // //   expect(window.location.href).toEqual("/home");
-    // });
-  });
 });
